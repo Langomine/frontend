@@ -2,15 +2,27 @@ import React from 'react'
 import './App.css'
 // import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid2';
-import {Box, Divider, List, ListItem, ListItemIcon, ListItemText, Tab, Tabs} from "@mui/material";
+import {
+    Box,
+    Dialog, DialogActions, DialogContent, DialogContentText,
+    DialogTitle,
+    Divider, IconButton, InputAdornment,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    OutlinedInput,
+    Tab,
+    Tabs, Tooltip,
+} from "@mui/material";
 import {IoCheckmark, IoShareSocialOutline} from "react-icons/io5";
 import {LiaTimesSolid} from "react-icons/lia";
 import GaugeComponent from 'react-gauge-component';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 
 import 'chart.js/auto';
@@ -18,6 +30,7 @@ import { Radar } from 'react-chartjs-2';
 import {ChartData, ChartOptions} from "chart.js";
 import { AudioPlayer } from 'react-audio-player-component';
 import {MdDelete, MdOutlineKeyboardVoice} from "react-icons/md";
+import {IoMdCopy} from "react-icons/io";
 
 
 function App() {
@@ -25,6 +38,40 @@ function App() {
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
       setTab(newValue);
   };
+
+  const [deleteShown, setDeleteShown] = React.useState(false);
+
+  const showDelete = () => {
+      setDeleteShown(true)
+  }
+
+  const hideDelete = () => {
+      setDeleteShown(false)
+  }
+
+  const handleDelete = () => {
+      hideDelete()
+      // TODO: delete ...
+  }
+
+
+    const [shareShown, setShareShown] = React.useState(false);
+
+    const showShare = () => {
+        setShareShown(true)
+    }
+
+    const hideShare = () => {
+        setShareShown(false)
+    }
+
+    const [copyText, setCopyText] = React.useState('Copy');
+
+    const copied = () => {
+        setCopyText('Copied!')
+
+        setTimeout(() => {setCopyText('Copy')}, 1000)
+    }
 
   const summaryChartOptions: ChartOptions<'radar'> = {
     responsive: true,
@@ -145,6 +192,7 @@ function App() {
                                                 </Grid>
                                                 <Grid size={4}>
                                                     <Button
+                                                        onClick={showShare}
                                                         variant="contained"
                                                         size="small"
                                                         startIcon={<IoShareSocialOutline />}
@@ -154,6 +202,7 @@ function App() {
                                                 </Grid>
                                                 <Grid size={4}>
                                                     <Button
+                                                        onClick={showDelete}
                                                         variant="contained"
                                                         size="small"
                                                         startIcon={<MdDelete />}
@@ -243,6 +292,68 @@ function App() {
 
             </CardContent>
         </Card>
+
+        <Dialog
+            open={deleteShown}
+            onClose={hideDelete}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                {"Delete Voice?"}
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    We'll delete your voice file and it's extracted content. However, it's stats (such as duration) will be kept for analytical purposes.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={hideDelete} autoFocus>Nope</Button>
+                <Button onClick={handleDelete}  color="error">
+                    Yes, Delete!
+                </Button>
+            </DialogActions>
+        </Dialog>
+
+        <Dialog
+            open={shareShown}
+            onClose={hideShare}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                {"Share"}
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    <CopyToClipboard text="{this.state.value}" onCopy={copied}>
+                        <Tooltip title={copyText}>
+                            <OutlinedInput
+                                type='text'
+                                readOnly={true}
+                                value="https://.../uuid"
+                                endAdornment={
+                                    <InputAdornment position="end">
+
+                                            <IconButton
+                                                aria-label="toggle visibility"
+                                                edge="end"
+                                            >
+                                                    <IoMdCopy />
+                                            </IconButton>
+
+                                    </InputAdornment>
+                                }
+                            />
+                        </Tooltip>
+                    </CopyToClipboard>
+
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={hideShare} autoFocus>OK</Button>
+            </DialogActions>
+        </Dialog>
     </>
   )
 }
