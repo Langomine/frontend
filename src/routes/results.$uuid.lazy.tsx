@@ -1,4 +1,4 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import {createLazyFileRoute, createLink} from '@tanstack/react-router'
 import '../App.css'
 
 import React from 'react'
@@ -17,32 +17,29 @@ import {
   Divider,
   IconButton,
   InputAdornment,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   OutlinedInput,
   Tab,
   Tabs,
   Tooltip,
 } from '@mui/material'
-import { IoCheckmark, IoShareSocialOutline } from 'react-icons/io5'
-import { LiaTimesSolid } from 'react-icons/lia'
-import GaugeComponent from 'react-gauge-component'
+import { IoShareSocialOutline } from 'react-icons/io5'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import 'chart.js/auto'
-import { Radar } from 'react-chartjs-2'
-import { ChartData, ChartOptions } from 'chart.js'
-import { AudioPlayer } from 'react-audio-player-component'
 import { MdDelete, MdOutlineKeyboardVoice } from 'react-icons/md'
 import { IoMdCopy } from 'react-icons/io'
+import ScoreGauge from "../components/ScoreGauge.tsx";
+import VoicePlayer from "../components/VoicePlayer.tsx";
+import PointList from "../components/PointList.tsx";
+import OverallScoreRadar from "../components/OverallScoreRadar.tsx";
+
+const RouterButton = createLink(Button)
 
 export const Route = createLazyFileRoute('/results/$uuid')({
   component: Results,
 })
 
 function Results() {
-  const { postId } = Route.useParams()
+  const { uuid } = Route.useParams()
 
   const [tab, setTab] = React.useState(0)
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -84,31 +81,12 @@ function Results() {
     }, 1000)
   }
 
-  const summaryChartOptions: ChartOptions<'radar'> = {
-    responsive: true,
-    scales: {
-      r: {
-        min: 0,
-        max: 9,
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-  }
-  const summaryChartData: ChartData<'radar'> = {
-    labels: ['Fluency', 'Lexical', 'Grammar', 'Pronunciation'],
-    datasets: [{ data: [2, 1, 3, 7] }],
-  }
-
   return (
     <>
       <Card sx={{ width: 1000 }}>
         <CardContent sx={{ minHeight: 400 }}>
           <Typography gutterBottom variant="h5" component="div">
-            Test Results {postId}
+            Test Results {uuid}
           </Typography>
 
           <Grid container spacing={2}>
@@ -138,28 +116,7 @@ function Results() {
                           alignItems: 'center',
                         }}
                       >
-                        <GaugeComponent
-                          type="semicircle"
-                          labels={{
-                            valueLabel: {
-                              style: {
-                                fill: '#444444',
-                                textShadow: 'unset',
-                              },
-                              formatTextValue: (value: number) =>
-                                `${value} - GOOD`,
-                            },
-                          }}
-                          arc={{
-                            colorArray: ['#FF2121', '#00FF15'],
-                            padding: 0.02,
-                            subArcs: [{ limit: 3 }, { limit: 6 }, { limit: 9 }],
-                          }}
-                          pointer={{ type: 'blob', animationDelay: 0 }}
-                          minValue={0}
-                          maxValue={9}
-                          value={7}
-                        />
+                        <ScoreGauge score={2}/>
 
                         <Typography
                           gutterBottom
@@ -184,21 +141,7 @@ function Results() {
                           Your Voice
                         </Typography>
 
-                        <AudioPlayer
-                          src="https://cdn.langomine.com/voices/2b0f3bc8-272f-4301-a98f-187e591f114d.mp3"
-                          minimal={true}
-                          width={350}
-                          trackHeight={75}
-                          barWidth={1}
-                          gap={1}
-                          visualise={true}
-                          backgroundColor="#FFFFFF"
-                          barColor="#C1D0B5"
-                          barPlayedColor="#99A98F"
-                          skipDuration={2}
-                          showLoopOption={true}
-                          showVolumeControl={true}
-                        />
+                        <VoicePlayer src="https://cdn.langomine.com/voices/2b0f3bc8-272f-4301-a98f-187e591f114d.mp3"/>
 
                         <Typography
                           gutterBottom
@@ -216,13 +159,14 @@ function Results() {
 
                         <Grid container spacing={2} width="100%">
                           <Grid size={4}>
-                            <Button
+                            <RouterButton
                               variant="contained"
                               size="small"
                               startIcon={<MdOutlineKeyboardVoice />}
+                              to="/"
                             >
                               New
-                            </Button>
+                            </RouterButton>
                           </Grid>
                           <Grid size={4}>
                             <Button
@@ -249,76 +193,21 @@ function Results() {
                       </Box>
                     </Grid>
                     <Grid size={5}>
-                      <Radar
-                        data={summaryChartData}
-                        options={summaryChartOptions}
-                      />
+                      <OverallScoreRadar fluency={3} grammar={7} lexical={4} pronunciation={6}/>
                     </Grid>
                   </Grid>
                 </div>
                 <div hidden={tab !== 1}>
-                  <List dense={true}>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'green', minWidth: 25 }}>
-                        <IoCheckmark />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'red', minWidth: 25 }}>
-                        <LiaTimesSolid />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                  </List>
+                  <PointList status={'bad'} points={['aaaa', 'bbbb']} />
                 </div>
                 <div hidden={tab !== 2}>
-                  <List dense={true}>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'green', minWidth: 25 }}>
-                        <IoCheckmark />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'red', minWidth: 25 }}>
-                        <LiaTimesSolid />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                  </List>
+                  <PointList status={'good'} points={['aaaa', 'bbbb']} />
                 </div>
                 <div hidden={tab !== 3}>
-                  <List dense={true}>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'green', minWidth: 25 }}>
-                        <IoCheckmark />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'red', minWidth: 25 }}>
-                        <LiaTimesSolid />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                  </List>
+                  <PointList status={'bad'} points={['aaaa', 'bbbb']} />
                 </div>
                 <div hidden={tab !== 4}>
-                  <List dense={true}>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'green', minWidth: 25 }}>
-                        <IoCheckmark />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon sx={{ color: 'red', minWidth: 25 }}>
-                        <LiaTimesSolid />
-                      </ListItemIcon>
-                      <ListItemText primary="Chelsea Otakan" />
-                    </ListItem>
-                  </List>
+                  <PointList status={'good'} points={['aaaa', 'bbbb']} />
                 </div>
               </div>
             </Grid>
@@ -378,7 +267,7 @@ function Results() {
         </DialogContent>
         <DialogActions>
           <Button onClick={hideShare} autoFocus>
-            OK
+            Close
           </Button>
         </DialogActions>
       </Dialog>

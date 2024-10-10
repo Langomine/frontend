@@ -1,4 +1,13 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
+import VoiceRecorder from "../components/VoiceRecorder.tsx";
+import Typography from "@mui/material/Typography";
+import React from "react";
+import CardContent from "@mui/material/CardContent";
+import Card from "@mui/material/Card";
+import '../App.css'
+import {Box} from "@mui/material";
+import Grid from "@mui/material/Grid2";
+
 
 export const Route = createLazyFileRoute('/')({
     component: Index,
@@ -6,8 +15,12 @@ export const Route = createLazyFileRoute('/')({
 
 function Index() {
     return (
-        <div className="p-2">
-            <h3>Welcome Home!</h3>
-        </div>
+        <Card sx={{ width: 1000 }}>
+            <Grid container spacing={2} minHeight={400}>
+                <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
+                    <VoiceRecorder />
+                </Grid>
+            </Grid>
+        </Card>
     )
 }
