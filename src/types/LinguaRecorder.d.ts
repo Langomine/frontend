@@ -1,3 +1,5 @@
+declare module 'lingua-recorder'
+
 declare interface AudioRecord {
     new(samples: Float32Array, sampleRate: number): AudioRecordInstance;
 }

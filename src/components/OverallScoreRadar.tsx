@@ -1,4 +1,3 @@
-import GaugeComponent from "react-gauge-component";
 import {ChartData, ChartOptions} from "chart.js";
 import {Radar} from "react-chartjs-2";
 

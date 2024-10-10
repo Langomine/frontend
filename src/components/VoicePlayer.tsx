@@ -1,3 +1,4 @@
+// @ts-ignore
 import {AudioPlayer} from "react-audio-player-component";
 
 type Props = {

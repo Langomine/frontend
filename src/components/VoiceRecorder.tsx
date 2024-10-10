@@ -1,17 +1,14 @@
 import { LinguaRecorder } from 'lingua-recorder';
 import Button from "@mui/material/Button";
 import {MdHelpOutline, MdOutlineKeyboardVoice} from "react-icons/md";
-import React, {useEffect} from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import {
     Box, Dialog, DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle, IconButton,
-    InputAdornment,
-    OutlinedInput,
+    DialogTitle,
 } from "@mui/material";
-import {IoMdCopy} from "react-icons/io";
 
 
 enum RecorderState {

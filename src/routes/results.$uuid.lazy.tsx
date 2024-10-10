@@ -1,5 +1,4 @@
 import {createLazyFileRoute, createLink} from '@tanstack/react-router'
-import '../App.css'
 
 import React from 'react'
 import Card from '@mui/material/Card'
