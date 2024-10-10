@@ -122,7 +122,7 @@ export default function VoiceRecorder() {
                             Click on the settings icon near address bar of your browser and allow us to use your mic. A page refresh might be needed if not functioning immediately.
                         </Typography>
 
-                        <img height={300} src="/src/assets/help-allow-microphone.png" alt="How to enable mic"/>
+                        <img height={300} src="/help-allow-microphone.png" alt="How to enable mic"/>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
