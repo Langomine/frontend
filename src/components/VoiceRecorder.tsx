@@ -1,136 +1,67 @@
-import { LinguaRecorder } from 'lingua-recorder';
 import Button from "@mui/material/Button";
-import {MdHelpOutline, MdOutlineKeyboardVoice} from "react-icons/md";
-import React from "react";
-import Typography from "@mui/material/Typography";
+import {MdOutlineKeyboardVoice} from "react-icons/md";
 import {
-    Box, Dialog, DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
+    Box,
 } from "@mui/material";
+import {Recorder} from '../lib/recorder/recorder'
+import VoiceRecorderDisallowed from "./VoiceRecorderDisallowed.tsx";
+import {useEffect} from "react";
 
-
-enum RecorderState {
-    Ready,
-    Failed,
-    Recording,
-}
+const recorder = new Recorder()
 
 export default function VoiceRecorder() {
-    const recorder = new LinguaRecorder() as LinguaRecorderInstance;
-
-    const [state, setState] = React.useState<RecorderState>(RecorderState.Ready)
-
-    /**
-     * Since LinguaRecorder doesn't support permission updates, we use a temporary one to
-     * keep the state updated.
-     */
-    setInterval(async () => {
-        try {
-            await navigator.mediaDevices.getUserMedia({audio: true, video:false})
-
-            if (state === RecorderState.Failed) {
-                setState(RecorderState.Ready)
-            }
-        } catch (e) {
-            if (state !== RecorderState.Failed) {
-                setState(RecorderState.Failed)
-                recorder.stop()
-            }
-        }
-    }, 1000)
-
-
-    recorder.on('stopped', () => {
-        setState(RecorderState.Ready)
-        console.log(state);
-    })
-    recorder.on('started', () => {
-        setState(RecorderState.Recording)
-        console.log(state);
-    })
-
     function click() {
-        if (state === RecorderState.Failed) {
-            return
-        }
-
-        if (state === RecorderState.Ready) {
-            console.log(recorder.start())
+        console.log(recorder.isRecording())
+        if (recorder.isRecording()) {
+            recorder.finish()
         } else {
-            console.log(recorder.stop())
+            recorder.start()
         }
     }
 
-    const [helpShown, setHelpShown] = React.useState(false)
+    console.log(recorder)
 
-    const showHelp = () => {
-        setHelpShown(true)
-    }
-
-    const hideHelp = () => {
-        setHelpShown(false)
+    if (!recorder.hasPermission()) {
+        return <VoiceRecorderDisallowed />
     }
 
     return (
-        <>
-            <Box>
-                { state }
-                {
-                    state === RecorderState.Failed
-                        ? (
-                            <>
-                                <Typography color={'error'}>
-                                    Please allow us to use you microphone.
-                                </Typography>
-                                <div>
-                                    <Button
-                                        size="small"
-                                        color="secondary"
-                                        startIcon={<MdHelpOutline />}
-                                        onClick={showHelp}
-                                    >
-                                        How?
-                                    </Button>
-                                </div>
-                            </>
-                        )
-                        : (
-                            <Button
-                                variant="contained"
-                                sx={{ width: '200px', height: '200px', borderRadius: '50%', boxShadow: state === RecorderState.Recording ? 0 : 10}}
-                                className={`${state === RecorderState.Recording ? 'beat' : ''}`}
-                                onClick={click}
-                            >
-                                <MdOutlineKeyboardVoice size={100}/>
-                            </Button>
-                        )
-                }
-            </Box>
-
-            <Dialog
-                open={helpShown}
-                onClose={hideHelp}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+        <Box>
+            s: { recorder.isRecording() }
+            <Button
+                variant="contained"
+                sx={{ width: '200px', height: '200px', borderRadius: '50%', boxShadow: recorder.isRecording() ? 0 : 10}}
+                color={recorder.isRecording() ? 'secondary' : 'primary'}
+                onClick={click}
             >
-                <DialogTitle id="alert-dialog-title">{'Enable Mic'}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <Typography align={'center'}>
-                            Click on the settings icon near address bar of your browser and allow us to use your mic. A page refresh might be needed if not functioning immediately.
-                        </Typography>
+                <MdOutlineKeyboardVoice
+                    size={100}
+                    className={`${recorder.isRecording() ? 'beat' : ''}`}
+                />
 
-                        <img height={300} src="/help-allow-microphone.png" alt="How to enable mic"/>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={hideHelp} autoFocus>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </>
+                {
+                    <div style={{
+                        position: 'absolute',
+                        left: '-10px',
+                        bottom: '-22px',
+                        clipPath: 'ellipse(99px 106px at 65% -4%)',
+                        transform: 'rotate(24deg)',
+                    }}>
+                      <img width="128" src='/khaby-body.png'/>
+                      <img
+                        width="45"
+                        src='/khaby-hand.png'
+                        style={{
+                          position: 'absolute',
+                          left: '67px',
+                          bottom: '32px',
+                          transformOrigin: 'bottom',
+                        }}
+                        className={'khaby-hand'}
+                      />
+                    </div>
+                }
+            </Button>
+        </Box>
     )
 }
