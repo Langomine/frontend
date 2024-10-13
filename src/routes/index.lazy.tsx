@@ -10,6 +10,7 @@ import {components} from "../lib/api/schema";
 import Typography from "@mui/material/Typography";
 import {IoDiceOutline} from "react-icons/io5";
 import {IconButton} from "@mui/material";
+import Agreement from "../components/Agreement.tsx";
 
 export const Route = createLazyFileRoute('/')({
     component: Index,
@@ -50,21 +51,35 @@ function Index() {
                         ? <BeatLoader />
                         : (
                             <div>
-                                <Typography>
-                                    Click to the button below and talk about the following question for 30 seconds:
-                                </Typography>
 
-                                <Typography color={'secondary'}>
+
+                                <Typography color={'secondary'} px={4}>
                                     { question?.text }
 
-                                    <IconButton onClick={selectRandomQuestion}>
+                                    <IconButton size={'small'} onClick={selectRandomQuestion} sx={{marginLeft: '4px'}}>
                                         <IoDiceOutline />
                                     </IconButton>
                                 </Typography>
 
 
+                                <Typography my={1}>
+                                    Click and answer!
+                                </Typography>
 
                                 <VoiceRecorder />
+
+                                <Agreement>
+                                    <Typography variant="caption" my={2} sx={{ display: 'block' }}>
+
+                                        By clicking above, you agree to our
+                                        <Typography variant="caption" color={'info'}> Terms </Typography>
+                                        and
+                                        <Typography variant="caption" color={'info'}> Privacy Policy</Typography>
+                                        .
+                                    </Typography>
+                                </Agreement>
+
+
                             </div>
                         )
                     }
