@@ -87,8 +87,47 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        Analysed: {
+            fluency_and_coherence: components["schemas"]["FluencyAndCoherence"];
+            lexical_resource: components["schemas"]["LexicalResource"];
+            grammatical_range_and_accuracy: components["schemas"]["GrammaticalRange"];
+            pronunciation: components["schemas"]["Pronunciation"];
+            overall_assessment: components["schemas"]["OverallAssessment"];
+        };
+        FluencyAndCoherence: {
+            /** Format: double */
+            band_score: number;
+            strengths: string[];
+            areas_for_improvement: string[];
+            detailed_feedback: string;
+        };
+        GrammaticalRange: {
+            /** Format: double */
+            band_score: number;
+            structure_analysis: components["schemas"]["StructureAnalysis"];
+            detailed_feedback: string;
+        };
+        LexicalResource: {
+            /** Format: double */
+            band_score: number;
+            vocabulary_analysis: components["schemas"]["VocabularyAnalysis"];
+            detailed_feedback: string;
+        };
         MainStats: {
             total_duration_s: number;
+        };
+        OverallAssessment: {
+            /** Format: double */
+            band_score: number;
+            key_strengths: string[];
+            priority_improvements: string[];
+            summary: string;
+        };
+        PhoneticAnalysis: {
+            /** Format: double */
+            clarity_score: number;
+            problem_sounds: string[];
+            intonation_patterns: string[];
         };
         ProcessedVoice: {
             /** Format: uuid */
@@ -101,10 +140,26 @@ export interface components {
             language?: string | null;
             /** Format: date-time */
             readonly created_at: string;
+            analysed: components["schemas"]["Analysed"];
+        };
+        Pronunciation: {
+            /** Format: double */
+            band_score: number;
+            phonetic_analysis: components["schemas"]["PhoneticAnalysis"];
+            detailed_feedback: string;
         };
         Question: {
             readonly id: number;
             text: string;
+        };
+        StructureAnalysis: {
+            complex_structures: string[];
+            errors: string[];
+        };
+        VocabularyAnalysis: {
+            sophisticated_terms: string[];
+            collocations: string[];
+            idiomatic_expressions: string[];
         };
         VoiceUploadRequest: {
             /** Format: binary */
