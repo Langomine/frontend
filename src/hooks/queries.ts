@@ -14,6 +14,25 @@ export const useListQuestions = () => {
     })
 }
 
+export const useGetProcessedVoice = (uuid: string) => {
+    return useQuery({
+        queryKey: ['processed-voice', uuid],
+        queryFn: async () => {
+            const {data, error} = await api.GET('/api/voices/{uuid}/', {
+                params: {
+                    path: {
+                        uuid: uuid
+                    }
+                }
+            })
+            if (data) {
+                return data;
+            }
+            throw new Error(error);
+        },
+    })
+}
+
 export const useCreateVoice = () => {
     return useMutation({
         mutationFn: async (file: File) => {
